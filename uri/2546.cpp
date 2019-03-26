@@ -2,12 +2,13 @@
  
 using namespace std;
  
-#define MAX_NIVEIS (4)
+#define MAX_NIVEIS (18)
  
 typedef long long ll;
  
 ll arvore[1<<MAX_NIVEIS][3]; // Propag, Max, Indice_Max
 ll maxi[2]; // Indice_Max, Max
+int build = 1, indice;
  
 void atualiza(int lo, int hi, int valor, int noh, int inicio, int fim) {
     if (hi < inicio or lo > fim){ // Intervalo não está dentro de [lo, hi]
@@ -16,6 +17,10 @@ void atualiza(int lo, int hi, int valor, int noh, int inicio, int fim) {
     if (lo <= inicio and hi >= fim) { // Intervalo está incluído dentro de [lo, hi]
         arvore[noh][0] += valor;
         arvore[noh][1] += valor;
+        if (build == 1 && lo == hi)
+        {
+        	arvore[noh][2] = indice;
+        }
         return;
     }
  
@@ -58,7 +63,6 @@ void consulta(int lo, int hi, int noh, int inicio, int fim) {
         }
         return;
     }
-        // return arvore[noh][2] + arvore[noh][1] * (fim - inicio + 1);
  
     int meio = (inicio + fim)/2;
     int esq = 2*noh + 1;
@@ -71,73 +75,44 @@ void consulta(int lo, int hi, int noh, int inicio, int fim) {
     arvore[dir][1] += arvore[noh][0];
     arvore[noh][0] = 0;
 
-
-    // arvore[noh][0] += arvore[noh][1] * (fim - inicio + 1);
- 
-    // arvore[esq][1] += arvore[noh][1];
-    // arvore[dir][1] += arvore[noh][1];
-    // arvore[noh][1] = 0;
  
     consulta(lo, hi, esq, inicio, meio);
     consulta(lo, hi, dir, meio+1, fim);
-
-    if (arvore[esq][1] > maxi[1]) {
-        maxi[0] = arvore[esq][2];
-        maxi[1] = arvore[esq][1];
-    }
-
-    if (arvore[dir][1] > maxi[1]) {
-        maxi[0] = arvore[dir][2];
-        maxi[1] = arvore[dir][1];
-    }
-    
-
 }
  
 int main() {
     int netos, ops, lo, hi, val;
     char tp;
+
     ll x;
 
     while(scanf("%d%d", &netos, &ops) != EOF){
+    	build = 1;
+    	memset(arvore, 0, sizeof arvore);
         for(int i = 0; i < netos; i++){
             scanf("%d", &val);
+            indice = i;
             atualiza(i, i, val, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
         }
+        build = 0;
 
-        puts("-----");
-        puts("Propag || Max || Indice Max");
-        puts("-----");
-        for(int i = 0; i < netos*4; i++)
-        {
-            printf("%d -- %lld %lld %lld\n", i, arvore[i][0], arvore[i][1], arvore[i][2]);
-        }
-        
-        puts("-----");
-        puts("indice || valor");
-        puts("-----");
         for(int i = 0; i < ops; i++)
         {
-            cin >> tp;
-
+            scanf(" %c", &tp);
             if (tp == 'C') {
-                maxi[0] = 0;
-                maxi[1] = 0;
+                maxi[0] = -1;
+                maxi[1] = -1;
                 scanf("%d %d", &lo, &hi);
                 consulta(lo-1, hi-1, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
-                printf("%lld %lld\n", maxi[0], maxi[1]);
+                printf("%lld\n", maxi[0]+1);
+
             }
             else
             {
                 scanf("%d %d %d", &lo, &hi, &val);
                 atualiza(lo-1, hi-1, val, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
             }
-            
-            
         }
-        
-        
-        break;        
     }
     
     return 0;
