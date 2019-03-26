@@ -2,7 +2,7 @@
  
 using namespace std;
  
-#define MAX_NIVEIS (18)
+#define MAX_NIVEIS (4)
  
 typedef long long ll;
  
@@ -35,12 +35,14 @@ void atualiza(int lo, int hi, int valor, int noh, int inicio, int fim) {
     atualiza(lo, hi, valor, dir, meio + 1, fim);
 
     //Atualiza o pai
-    if (arvore[dir][1] > arvore[esq][1]) {
-        arvore[noh][1] = arvore[dir][1];
+    if (arvore[esq][1] >= arvore[dir][1]) {
+        arvore[noh][1] = arvore[esq][1];
+        arvore[noh][2] = arvore[esq][2];
     }
     else
     {
-        arvore[noh][1] = arvore[esq][1];
+        arvore[noh][1] = arvore[dir][1];
+        arvore[noh][2] = arvore[dir][2];
     }
 }
  
@@ -103,19 +105,32 @@ int main() {
             atualiza(i, i, val, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
         }
 
+        puts("-----");
+        puts("Propag || Max || Indice Max");
+        puts("-----");
+        for(int i = 0; i < netos*4; i++)
+        {
+            printf("%d -- %lld %lld %lld\n", i, arvore[i][0], arvore[i][1], arvore[i][2]);
+        }
+        
+        puts("-----");
+        puts("indice || valor");
+        puts("-----");
         for(int i = 0; i < ops; i++)
         {
             cin >> tp;
 
             if (tp == 'C') {
+                maxi[0] = 0;
+                maxi[1] = 0;
                 scanf("%d %d", &lo, &hi);
-                consulta(lo, hi, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
+                consulta(lo-1, hi-1, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
                 printf("%lld %lld\n", maxi[0], maxi[1]);
             }
             else
             {
                 scanf("%d %d %d", &lo, &hi, &val);
-                atualiza(lo, hi, val, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
+                atualiza(lo-1, hi-1, val, 0, 0, (1<<(MAX_NIVEIS-1)) - 1);
             }
             
             
