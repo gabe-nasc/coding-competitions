@@ -11,11 +11,18 @@ using namespace std;
 */
 
 int horarios[1001000];
+// int res[1001000][1001000];
 
 int conta(int init, int fim){
-    if (horario[init] != 0)
+    // printf("%d, %d\n", init, fim);
+    if (init == fim)
     {
-        return max(conta(init, fim), conta(horario[init], fim)+1)
+        return 0;
+    }
+
+    if (horarios[init] != 0)
+    {
+        return max(conta(init, fim), conta(horarios[init], fim)+1);
     }
 
     else
@@ -24,8 +31,8 @@ int conta(int init, int fim){
     }
 }
 
-void main(){
-    int n, a, b, mini;
+int main(){
+    int n, a, b, mini = 1e9;
 
     scanf("%d", &n);
     for (size_t i = 0; i < n; i++)
@@ -40,7 +47,7 @@ void main(){
             horarios[a] = b;
         }
     }
-
-    printf("%d", conta(mini, a))
+    // printf("> %d", a);
+    printf("%d", conta(mini, a));
 }
 
